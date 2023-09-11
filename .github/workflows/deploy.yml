@@ -1,179 +1,242 @@
-name: Deploy Website
-
-on:
-  push:
-    branches:
-      - main
-
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v2
-
-      - name: Set up Ruby
-        uses: actions/setup-ruby@v1
-        with:
-          ruby-version: 2.x # Change to your desired Ruby version
-
-      - name: Install Dependencies
-        run: |
-          gem install bundler
-          bundle config path vendor/bundle
-          bundle install --jobs 4 --retry 3
-
-      - name: Install mermaid.cli
-        run: npm install -g mermaid.cli
-
-      - name: Set up deploy options
-        id: setup
-        run: |
-          git config --global user.name "GitHub Action"
-          git config --global user.email "your-email@example.com"
-
-          if [[ "${{ github.ref }}" = "refs/pull/*/merge" ]]; then
-            echo "::set-output name=SRC_BRANCH::${GITHUB_HEAD_REF}"
-            echo "::set-output name=NO_PUSH::--no-push"
-          elif [[ "${{ github.ref }}" = "refs/heads/*" ]]; then
-            echo "::set-output name=SRC_BRANCH::${{ github.ref }}"
-          fi
-          echo "::set-output name=DEPLOY_BRANCH::gh-pages"
-
-      - name: Fix permission
-        run: |
-          chmod a+x bin/*
-          git commit -am "add execute permission to bin/deploy"
-
-      - name: Build website
-        run: npm run build
-
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v2
-        with:
-          name: website
-          path: path/to/website/folder
-
-      - name: Deploy website
-        run: yes | bash bin/deploy --verbose ${{ steps.setup.outputs.NO_PUSH }} --src ${{ steps.setup.outputs.SRC_BRANCH }} --deploy ${{ steps.setup.outputs.DEPLOY_BRANCH }}
-
-
-
-
-
-# name: deploy
+# name: Deploy Website
 
 # on:
 #   push:
 #     branches:
-#       - master
 #       - main
-#   pull_request:
-#     branches:
-#       - master
-#       - main
-#   workflow_dispatch:
-
-# permissions:
-#   contents: write
 
 # jobs:
 #   deploy:
-#     # available images: https://github.com/actions/runner-images#available-images
 #     runs-on: ubuntu-latest
+
 #     steps:
-#     - name: Checkout 🛎️
-#       uses: actions/checkout@v3
-#     - name: Setup Ruby
-#       uses: ruby/setup-ruby@v1
-#       with:
-#         ruby-version: '3.2.2'
-#         bundler-cache: true
-#     - name: Install and Build 🔧
-#       run: |
-#         pip3 install --upgrade jupyter
-#         npm install -g mermaid.cli
-#         export JEKYLL_ENV=production
-#         bundle exec jekyll build
-#     - name: Deploy 🚀
-#       if: github.event_name != 'pull_request'
-#       uses: JamesIves/github-pages-deploy-action@v4
-#       with:
-#         folder: _site
+#       - name: Checkout Repository
+#         uses: actions/checkout@v2
 
-# deploy.yml:
+#       - name: Set up Ruby
+#         uses: actions/setup-ruby@v1
+#         with:
+#           ruby-version: 2.x # Change to your desired Ruby version
 
-# path: vendor/bundle
+#       - name: Install Dependencies
+#         run: |
+#           gem install bundler
+#           bundle config path vendor/bundle
+#           bundle install --jobs 4 --retry 3
 
-# config.yml:
+#       - name: Install mermaid.cli
+#         run: npm install -g mermaid.cli
 
-# key: ${{ runner.os }}-gems-${{ hashFiles (***/Gemfile.lock') }}
+#       - name: Set up deploy options
+#         id: setup
+#         run: |
+#           git config --global user.name "GitHub Action"
+#           git config --global user.email "your-email@example.com"
 
-# restore-keys: |
+#           if [[ "${{ github.ref }}" = "refs/pull/*/merge" ]]; then
+#             echo "::set-output name=SRC_BRANCH::${GITHUB_HEAD_REF}"
+#             echo "::set-output name=NO_PUSH::--no-push"
+#           elif [[ "${{ github.ref }}" = "refs/heads/*" ]]; then
+#             echo "::set-output name=SRC_BRANCH::${{ github.ref }}"
+#           fi
+#           echo "::set-output name=DEPLOY_BRANCH::gh-pages"
 
-# ${{ runner.os }}-gems-
+#       - name: Fix permission
+#         run: |
+#           chmod a+x bin/*
+#           git commit -am "add execute permission to bin/deploy"
 
-# name: Install deps
+#       - name: Build website
+#         run: npm run build
 
-# run: 1
+#       - name: Upload artifacts
+#         uses: actions/upload-artifact@v2
+#         with:
+#           name: website
+#           path: path/to/website/folder
 
-# gem install bundler
+#       - name: Deploy website
+#         run: yes | bash bin/deploy --verbose ${{ steps.setup.outputs.NO_PUSH }} --src ${{ steps.setup.outputs.SRC_BRANCH }} --deploy ${{ steps.setup.outputs.DEPLOY_BRANCH }}
 
-# bundle config path vendor/bundle
 
-# bundle install --jobs 4 --retry 3 
 
-# npm install -g mermaid.cli
 
-# name: Setup deploy options
 
-# id: setup
+# # name: deploy
 
-# run: |
+# # on:
+# #   push:
+# #     branches:
+# #       - master
+# #       - main
+# #   pull_request:
+# #     branches:
+# #       - master
+# #       - main
+# #   workflow_dispatch:
 
-# git config --global user.name "GitHub Action"
+# # permissions:
+# #   contents: write
 
-# git config --global user.email "41898282+github-actions [bot]@users.noreply.gith
+# # jobs:
+# #   deploy:
+# #     # available images: https://github.com/actions/runner-images#available-images
+# #     runs-on: ubuntu-latest
+# #     steps:
+# #     - name: Checkout 🛎️
+# #       uses: actions/checkout@v3
+# #     - name: Setup Ruby
+# #       uses: ruby/setup-ruby@v1
+# #       with:
+# #         ruby-version: '3.2.2'
+# #         bundler-cache: true
+# #     - name: Install and Build 🔧
+# #       run: |
+# #         pip3 install --upgrade jupyter
+# #         npm install -g mermaid.cli
+# #         export JEKYLL_ENV=production
+# #         bundle exec jekyll build
+# #     - name: Deploy 🚀
+# #       if: github.event_name != 'pull_request'
+# #       uses: JamesIves/github-pages-deploy-action@v4
+# #       with:
+# #         folder: _site
 
-# if [[ ${GITHUB_REF) = refs/pull/*/merge ]]; then # pull request
+# # deploy.yml:
 
-# echo "::set-output name=SRC_BRANCH::${GITHUB_HEAD_REF}"
+# # path: vendor/bundle
 
-# echo "::set-output name=NO_PUSH: :--no-push"
+# # config.yml:
 
-# elif [[ ${GITHUB_REF} = refs/heads/* ]]; then # branch, e.g. master, source etc
+# # key: ${{ runner.os }}-gems-${{ hashFiles (***/Gemfile.lock') }}
 
-# echo "::set-output name=SRC_BRANCH::${GITHUB_REF#refs/heads/}"
+# # restore-keys: |
 
-# fi
+# # ${{ runner.os }}-gems-
 
-# echo "::set-output name=DEPLOY_BRANCH::gh-pages"
+# # name: Install deps
 
-# - name: Fix permission
+# # run: 1
 
-# run: |
+# # gem install bundler
 
-# chmod a+x bin/*
+# # bundle config path vendor/bundle
 
-# git commit -am "add execute permision to bin/deploy"
+# # bundle install --jobs 4 --retry 3 
 
-# # Add the following lines
+# # npm install -g mermaid.cli
 
-# - name: Build website
+# # name: Setup deploy options
 
-# run: npm run build
+# # id: setup
 
-# - name: Upload artifacts
+# # run: |
 
-# uses: actions/upload-artifact@v2
+# # git config --global user.name "GitHub Action"
 
-# with:
+# # git config --global user.email "41898282+github-actions [bot]@users.noreply.gith
 
-# name: website
+# # if [[ ${GITHUB_REF) = refs/pull/*/merge ]]; then # pull request
 
-# path: path/to/website/folder
+# # echo "::set-output name=SRC_BRANCH::${GITHUB_HEAD_REF}"
 
-# - name: Deploy website
+# # echo "::set-output name=NO_PUSH: :--no-push"
 
-# run: yes | bash bin/deploy --verbose ${{ steps.setup.outputs.NO_PUSH }} --src ${{ steps.setup.outputs.SRC_BRANCH }} --deploy ${{ steps.setup.outputs.DEPLOY_BRANCH }}
+# # elif [[ ${GITHUB_REF} = refs/heads/* ]]; then # branch, e.g. master, source etc
+
+# # echo "::set-output name=SRC_BRANCH::${GITHUB_REF#refs/heads/}"
+
+# # fi
+
+# # echo "::set-output name=DEPLOY_BRANCH::gh-pages"
+
+# # - name: Fix permission
+
+# # run: |
+
+# # chmod a+x bin/*
+
+# # git commit -am "add execute permision to bin/deploy"
+
+# # # Add the following lines
+
+# # - name: Build website
+
+# # run: npm run build
+
+# # - name: Upload artifacts
+
+# # uses: actions/upload-artifact@v2
+
+# # with:
+
+# # name: website
+
+# # path: path/to/website/folder
+
+# # - name: Deploy website
+
+# # run: yes | bash bin/deploy --verbose ${{ steps.setup.outputs.NO_PUSH }} --src ${{ steps.setup.outputs.SRC_BRANCH }} --deploy ${{ steps.setup.outputs.DEPLOY_BRANCH }}
+name: deploy
+
+on:
+  push:
+    branches:
+      - master
+      - source
+  pull_request:
+    branches:
+      - master
+      - source
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+permissions:
+  repository-projects: write
+  contents: write
+  pages: write
+  id-token: write
+
+# Allow one concurrent deployment
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+    - name: Setup Ruby
+      uses: actions/setup-ruby@v1
+      with:
+        ruby-version: '2.7'
+        bundler-cache: true
+    - name: Install deps
+      run: |
+        gem install bundler
+        bundle config path vendor/bundle
+        bundle install --jobs 4 --retry 3
+    - name: Setup deploy options
+      id: setup
+      run: |
+        git config --global user.name "GitHub Action"
+        git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        if [[ ${GITHUB_REF} = refs/pull/*/merge ]]; then # pull request
+          echo "::set-output name=SRC_BRANCH::${GITHUB_HEAD_REF}"
+          echo "::set-output name=NO_PUSH::--no-push"
+        elif [[ ${GITHUB_REF} = refs/heads/* ]]; then # branch, e.g. master, source etc
+          echo "::set-output name=SRC_BRANCH::${GITHUB_REF#refs/heads/}"
+        fi
+        if [[ ${{ github.repository }} = *.github.io ]]; then # user/org repo
+          echo "::set-output name=DEPLOY_BRANCH::master"
+        else
+          echo "::set-output name=DEPLOY_BRANCH::gh-pages"
+        fi
+
+    - name: Deploy website
+      run:  yes | bin/deploy --verbose ${{ steps.setup.outputs.NO_PUSH }}
+                    --src ${{ steps.setup.outputs.SRC_BRANCH }}
+                    --deploy ${{ steps.setup.outputs.DEPLOY_BRANCH }}
