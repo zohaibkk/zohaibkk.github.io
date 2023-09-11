@@ -27,6 +27,7 @@ Link to your social media connections, too. This theme is set up to use [Font Aw
 Absolutely, here's a public profile paragraph based on the information you provided:
 
 ---
+
 *Empowering the World through Technology and Service*
 
 With a background in Electronic Engineering (BE) and nearing the completion of my Master's in Information Technology, I am deeply immersed in the realms of Data Science, Machine Learning, Deep Learning, Artificial Intelligence, and prompt engineering. My passion lies in harnessing the power of cutting-edge technology to address real-world challenges. 
@@ -36,4 +37,6 @@ I am proud to have received two distinguished awards for my impactful contributi
 Having worked as a Drive Test Engineer, I honed my technical expertise while ensuring seamless connectivity in critical communication networks. Additionally, my experience as a Computer Science Teacher for O-level and A-level students allowed me to inspire and guide the next generation of innovators. I also took on the role of Robotics Club Incharge, fostering creativity and problem-solving skills.
 
 My guiding principle is to "make this world a better place for everyone". I believe that through the convergence of technology, education, and community engagement, we can drive positive change that transcends boundaries. Let's collaborate in shaping a brighter future for all.
+---
+
 
