@@ -1,40 +1,115 @@
-name: deploy
+# name: deploy
 
-on:
-  push:
-    branches:
-      - master
-      - main
-  pull_request:
-    branches:
-      - master
-      - main
-  workflow_dispatch:
+# on:
+#   push:
+#     branches:
+#       - master
+#       - main
+#   pull_request:
+#     branches:
+#       - master
+#       - main
+#   workflow_dispatch:
 
-permissions:
-  contents: write
+# permissions:
+#   contents: write
 
-jobs:
-  deploy:
-    # available images: https://github.com/actions/runner-images#available-images
-    runs-on: ubuntu-latest
-    steps:
-    - name: Checkout 🛎️
-      uses: actions/checkout@v3
-    - name: Setup Ruby
-      uses: ruby/setup-ruby@v1
-      with:
-        ruby-version: '3.2.2'
-        bundler-cache: true
-    - name: Install and Build 🔧
-      run: |
-        pip3 install --upgrade jupyter
-        npm install -g mermaid.cli
-        export JEKYLL_ENV=production
-        bundle exec jekyll build
-    - name: Deploy 🚀
-      if: github.event_name != 'pull_request'
-      uses: JamesIves/github-pages-deploy-action@v4
-      with:
-        folder: _site
+# jobs:
+#   deploy:
+#     # available images: https://github.com/actions/runner-images#available-images
+#     runs-on: ubuntu-latest
+#     steps:
+#     - name: Checkout 🛎️
+#       uses: actions/checkout@v3
+#     - name: Setup Ruby
+#       uses: ruby/setup-ruby@v1
+#       with:
+#         ruby-version: '3.2.2'
+#         bundler-cache: true
+#     - name: Install and Build 🔧
+#       run: |
+#         pip3 install --upgrade jupyter
+#         npm install -g mermaid.cli
+#         export JEKYLL_ENV=production
+#         bundle exec jekyll build
+#     - name: Deploy 🚀
+#       if: github.event_name != 'pull_request'
+#       uses: JamesIves/github-pages-deploy-action@v4
+#       with:
+#         folder: _site
 
+deploy.yml:
+
+path: vendor/bundle
+
+config.yml:
+
+key: ${{ runner.os }}-gems-${{ hashFiles (***/Gemfile.lock') }}
+
+restore-keys: |
+
+${{ runner.os }}-gems-
+
+name: Install deps
+
+run: 1
+
+gem install bundler
+
+bundle config path vendor/bundle
+
+bundle install --jobs 4 --retry 3 
+
+npm install -g mermaid.cli
+
+name: Setup deploy options
+
+id: setup
+
+run: |
+
+git config --global user.name "GitHub Action"
+
+git config --global user.email "41898282+github-actions [bot]@users.noreply.gith
+
+if [[ ${GITHUB_REF) = refs/pull/*/merge ]]; then # pull request
+
+echo "::set-output name=SRC_BRANCH::${GITHUB_HEAD_REF}"
+
+echo "::set-output name=NO_PUSH: :--no-push"
+
+elif [[ ${GITHUB_REF} = refs/heads/* ]]; then # branch, e.g. master, source etc
+
+echo "::set-output name=SRC_BRANCH::${GITHUB_REF#refs/heads/}"
+
+fi
+
+echo "::set-output name=DEPLOY_BRANCH::gh-pages"
+
+- name: Fix permission
+
+run: |
+
+chmod a+x bin/*
+
+git commit -am "add execute permision to bin/deploy"
+
+# Add the following lines
+
+- name: Build website
+
+run: npm run build
+
+- name: Upload artifacts
+
+uses: actions/upload-artifact@v2
+
+with:
+
+name: website
+
+path: path/to/website/folder
+
+- name: Deploy website
+
+run: yes | bash bin/deploy --verbose ${{ steps.setup.outputs.NO_PUSH }} --src ${{ steps.setup.outputs.SRC_BRANCH }} --deploy ${{ steps.setup.outputs.DEPLOY_BRANCH }}
