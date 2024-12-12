@@ -28,8 +28,4 @@ My technical expertise spans programming languages such as Python, C++, and Embe
 
 Beyond my professional work, I am an active member of the QS Impact community, contributing to initiatives aligned with SDG goals, and have been honored with multiple QS World Merit Awards for my impactful work in education and health.
 
-With a track record of research publications and technical certifications from industry leaders like Huawei, Google, and Cisco, I continuously strive to expand my knowledge and deliver meaningful contributions to the fields of AI, machine learning, and automation.. Link to your favorite [subreddit](http://reddit.com). You can put a picture in, too. The code is already in, just name your picture `prof_pic.jpg` and put it in the `img/` folder.
-
-Put your address / P.O. box / other info right below your picture. You can also disable any of these elements by editing `profile` property of the YAML header of your `_pages/about.md`. Edit `_bibliography/papers.bib` and Jekyll will render your [publications page](/al-folio/publications/) automatically.
-
-Link to your social media connections, too. This theme is set up to use [Font Awesome icons](https://fontawesome.com/) and [Academicons](https://jpswalsh.github.io/academicons/), like the ones below. Add your Facebook, Twitter, LinkedIn, Google Scholar, or just disable all of them.
+With a track record of research publications and technical certifications from industry leaders like Huawei, Google, and Cisco, I continuously strive to expand my knowledge and deliver meaningful contributions to the fields of AI, machine learning, and automation.
